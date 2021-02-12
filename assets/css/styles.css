@@ -38,39 +38,41 @@ header p {
 
 /* HEADER STYLES END */
 
-/* SECTION STYLES START */
-section {
-    margin: 100px;
+/* INTRO STYLES START */
+#intro {
     text-align: center;
+    margin: 50px 30%;
 }
 
-section h1 {
+#intro h1 {
     font-size: 30px;
     margin-bottom: 20px;
 }
 
-section p {
+#intro p {
     margin-bottom: 20px;
-    padding: 0 30%;
 }
 
-/* SECTION STYLES END */
+/* INTRO STYLES END */
 
-/* MEDIA QUERIES START */
-@media screen and (max-width: 1024px) {
-    section p {
-        padding: 0 15%;
-    }
+/* QUESTIONS STYLES START */
+#questions {
+    margin: 0 auto;
+    width: 100%;
 }
 
-@media screen and (max-width: 700px) {
-    section {
-        margin: 100px 20px;
-    }
-    
-    section p {
-        padding: 0 0;
-    }
+.question-text {
+    margin-bottom: 30px;
 }
-/* MEDIA QUERIES END */
+
+.answer-option {
+    display: block;
+    margin: 5px 0;
+}
+
+.answer-option:focus {
+    border: 1px solid rgb(136, 103, 150);
+}
+
+/* QUESTION STYLES END */
 
