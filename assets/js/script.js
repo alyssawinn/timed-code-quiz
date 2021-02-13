@@ -29,10 +29,14 @@ function countdown() {
             timerEl.textContent = timeLeft;
             timeLeft--;
         }
-
     }, 1000);
 
     introEl.style.display = 'none';
+    createQuestion();
+};
+
+function createQuestion() {
+    //debugger
     var questionText = document.createElement("h2");
     questionText.className = "question-text";
     var option1 = document.createElement("button");
@@ -43,21 +47,20 @@ function countdown() {
     option3.className = "answer-option";
     var option4 = document.createElement("button");
     option4.className = "answer-option correct-answer";
+    questionsEl.appendChild(questionContainer);
+    questionContainer.appendChild(questionText);
+    questionContainer.appendChild(option1);
+    questionContainer.appendChild(option2);
+    questionContainer.appendChild(option3);
+    questionContainer.appendChild(option4);
 
-    for (var i = 0; i < questions.length; i++) {
-        questionText.textContent = questions[i].q;
-        option1.textContent = questions[i].a1;
-        option2.textContent = questions[i].a2;
-        option3.textContent = questions[i].a3;
-        option4.textContent = questions[i].a4;
-        questionsEl.appendChild(questionContainer);
-        questionContainer.appendChild(questionText);
-        questionContainer.appendChild(option1);
-        questionContainer.appendChild(option2);
-        questionContainer.appendChild(option3);
-        questionContainer.appendChild(option4);
-    }
-}
+    questionText.textContent = questions[0].q;
+    option1.textContent = questions[0].a1;
+    option2.textContent = questions[0].a2;
+    option3.textContent = questions[0].a3;
+    option4.textContent = questions[0].a4;
+
+};
 
 var clickAnswerHandler = function(event) {
     var targetEl = event.target;
@@ -75,8 +78,8 @@ var clickAnswerHandler = function(event) {
         timeLeft = timeLeft - 10;
     }
 
-    setTimeout(countdown, 1000);
+    setTimeout(createQuestion, 1000);
 };
 
 startBtn.onclick = countdown;
-questionsEl.addEventListener("click", clickAnswerHandler);
+questionsEl.addEventListener("click", clickAnswerHandler);    
