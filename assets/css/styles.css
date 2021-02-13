@@ -68,6 +68,7 @@ header p {
 .answer-option {
     display: block;
     margin: 5px 0;
+    width: 15%;
 }
 
 .answer-option:focus {
