@@ -20,10 +20,20 @@ option3.className = "answer-option";
 var option4 = document.createElement("button");
 option4.className = "answer-option correct-answer";
 
-//Score Page
+//Enter Score Page
 var enterScoreEl = document.getElementById('enter-score');
 var initialsInput = document.createElement("input");
 initialsInput.className = "input-box";
+initialsInput.setAttribute("id", "initials-input");
+var scoreContainer = document.createElement("div");
+var scoreHeader = document.createElement("h1");
+var totalScore = document.createElement("h2");
+var initialsContainer = document.createElement("p");
+var submitButton = document.createElement("button");
+submitButton.className = "submit-button";
+
+//Highscores Page
+var highscoresList = document.getElementById('high-scores-list');
 
 
 var questions = [
@@ -41,25 +51,26 @@ var player = {
     }
 }
 
-function clickSubmitHandler(event) {
-    var targetEl = event.target;
-    if (targetEl.matches(".submit-button")) {
-    }
-}
+function showHighScores() {
+    var highScores = localStorage.setItem("player", JSON.stringify(player));
+};
+
+function redirectToHighscores() {
+    player.name = document.getElementById('initials-input').value;
+    showHighScores();
+    setTimeout(function() {
+        window.location = "./highscores.html";
+    }, 100);
+    showHighScores();
+};
 
 function setScore() {
     player.score = timeLeft;
-    questionsEl.remove();
-    var scoreContainer = document.createElement("div");
-    var scoreHeader = document.createElement("h1");
     scoreHeader.textContent = "All done!";
-    var totalScore = document.createElement("h2");
-    totalScore.textContent = "Your final score is " + player.score + " .";
-    var initialsContainer = document.createElement("p");
+    totalScore.textContent = "Your final score is " + player.score + ".";
     initialsContainer.textContent = "Enter initials: ";
-    var submitButton = document.createElement("button");
-    submitButton.className = "submit-button";
     submitButton.textContent = "Submit";
+    questionsEl.remove();
     enterScoreEl.appendChild(scoreContainer);
     scoreContainer.appendChild(scoreHeader);
     scoreContainer.appendChild(totalScore);
@@ -74,6 +85,9 @@ function countdown() {
         if (timeLeft > 0 && player.score == 0) {
             timerEl.textContent = timeLeft;
             timeLeft--;
+        } else if (timeLeft < 1 && player.score == 0) {
+            timeLeft = 0;
+            setScore();
         }
     }, 1000);
     introEl.style.display = 'none';
@@ -137,5 +151,8 @@ var clickAnswerHandler = function(event) {
 };
 
 startBtn.onclick = countdown;
+submitButton.onclick = redirectToHighscores;
 questionsEl.addEventListener("click", clickAnswerHandler);
-enterScoreEl.addEventListener("click", clickSubmitHandler); 
+
+
+
