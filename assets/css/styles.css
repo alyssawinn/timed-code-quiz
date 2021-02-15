@@ -113,16 +113,20 @@ hr {
 }
 
 #high-scores-container li:nth-child(odd) {
-    background-color: #b818d894;
+    background-color: rgba(136, 68, 163, 0.2);
 }
 
 #high-scores-container li:nth-child(even) {
-    background-color: #756f72a4;
+    background-color:rgba(208,208,208, 0.4);
 }
 
 #high-scores-container button {
     margin: 10px 5px;
 }
 
+.high-score-ordered-list {
+    width: 200px;
+    margin: 5px auto;
+}
 /* HIGH SCORE PAGE END */
 

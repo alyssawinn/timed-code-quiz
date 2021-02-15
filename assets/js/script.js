@@ -2,6 +2,7 @@
 var startBtn = document.getElementById('start-btn');
 var timerEl = document.getElementById('countdown-timer');
 var introEl = document.getElementById('intro');
+var headerEl = document.getElementById('header');
 
 //Questions Section
 var questionsEl = document.getElementById('questions');
@@ -42,33 +43,72 @@ var initialsContainer = document.createElement("p");
 var submitButton = document.createElement("button");
 submitButton.className = "submit-button";
 
-//High Score Page
-var highScoresContainer = document.getElementById('high-scores-container');
-var restartBtn = document.getElementById('restart-btn');
-var clearBtn = document.getElementById('clear-btn');
+//High Score Section
+var highScoresEl = document.getElementById('high-scores-container');
+var highScoresContainer = document.createElement("div");
+var highScoresHeader = document.createElement("h2");
+highScoresHeader.textContent = "High Scores";
+var highScoresOl = document.createElement("ol");
+highScoresOl.className = "high-score-ordered-list";
+var highScoresRestart = document.createElement("button");
+highScoresRestart.textContent = "Go back";
+var highScoresClear = document.createElement("button");
+highScoresClear.textContent = "Clear high scores";
 var scores = [];
 
 var questions = [
     {q: "Commonly used data types do not include:", choices: ["booleans", "strings", "numbers", "alerts"], answer: "alerts"},
-    {q: "The condition in an if/else statement is enclosed with _____", choices: [ "curly brackets", "square brackets", "quotes", "parenthesises"], answer: "parenthesises"},
-    {q: "Arrays in JavaScript can be used to store _____", choices: ["other arrays", "numbers and strings", "booleans", "all of the above"], answer: "all of the above"}
+    {q: "The condition in an if/else statement is enclosed with _____", choices: [ "curly brackets", "square brackets", "quotes", "parenthesis"], answer: "parenthesis"},
+    {q: "Arrays in JavaScript can be used to store _____", choices: ["other arrays", "numbers and strings", "booleans", "all of the above"], answer: "all of the above"},
+    {q: "String values must be enclosed within ____ when being assigned to variables", choices: ["commas", "curly brackets", "parenthesis", "quotes"], answer: "quotes"},
+    {q: "A very useful tool used during development and debugging for printing content to the debugger is:", choices: ["JavaScript", "terminal/bash", "for loops", "console log"], answer: "console log"}
 ];
 
-var saveScore = function() {
-    localStorage.setItem("scores", JSON.stringify(scores));
-};
+function restart() {
+    setTimeout(function() {
+        
+    }, 100);
+}
 
 function loadScores() {
     var savedScores = localStorage.getItem("scores");
-
     if (!savedScores) {
-        return false;
+        createPlayer();
+        localStorage.setItem("scores", JSON.stringify(scores));
+    } else {
+        savedScores = JSON.parse(savedScores);
+        for (var i = 0; i < savedScores.length; i++) {
+            loadPlayer(savedScores[i]);
+        }
+    
+        createPlayer();
+        scores = scores.slice(1, 10);
+        //not sorting new value because the li was appended before the sort
+        scores.sort((a, b) => (a.score < b.score) ? 1: (a.score === b.score) ? ((a.name > b.name) ? 1 : -1) : -1 );
     }
+    
+    enterScoreEl.style.display = "none";
+    headerEl.style.display = "none";
 
-    savedScores = JSON.parse(savedScores);
-    for (var i = 0; i < savedScores.length; i++) {
-        loadPlayer(savedScores[i]);
-    }
+    highScoresEl.appendChild(highScoresContainer);
+    highScoresContainer.appendChild(highScoresHeader);
+    highScoresContainer.appendChild(highScoresOl);
+    highScoresContainer.appendChild(highScoresRestart);
+    highScoresContainer.appendChild(highScoresClear);
+
+    localStorage.setItem("scores", JSON.stringify(scores));
+    
+}
+
+var loadPlayer = function(player) {
+    var playerItem = document.createElement("li");
+    playerItem.className = "player-item";
+    var playerDetails = document.createElement("div");
+    playerDetails.className = "player-details";
+    playerDetails.innerHTML = player.name + " - " + player.score;
+    playerItem.appendChild(playerDetails);
+    highScoresOl.appendChild(playerItem); 
+    scores.push(player);
 }
 
 function createPlayer() {
@@ -78,26 +118,9 @@ function createPlayer() {
         score: timeLeft,
     };
 
-    setTimeout(function() {
-        window.location = "./highscores.html";
-    }, 100);
-
-    debugger
-    loadScores();
-
     loadPlayer(player);
     
 };
-
-var loadPlayer = function(player) {
-    var playerItem = document.createElement("li");
-    playerItem.className = "player-item";
-    var playerDetails = document.createElement("div");
-    playerDetails.className = "player-details";
-    playerDetails.innerHTML = player.name + " - " + player.score;
-    scores.push(player);
-    saveScore();
-}
 
 function setScore() {
     timeStopped = 1;
@@ -188,7 +211,9 @@ var clickAnswerHandler = function(event) {
 };
 
 startBtn.onclick = countdown;
-submitButton.onclick = createPlayer;
+submitButton.onclick = loadScores;
+highScoresRestart.onclick = restart;
+highScoresClear.onclick = localStorage.clear();
 questionsEl.addEventListener("click", clickAnswerHandler);
 
 
