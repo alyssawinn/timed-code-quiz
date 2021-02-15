@@ -4,22 +4,26 @@
     padding: 0;
 }
 
+*, *:focus, *:hover {
+    outline:none;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
 button {
     color: #fff;
-    background-color: rgb(89, 27, 114);
+    background-color: rgb(136, 68, 163);
     border-radius: 3px;
-    border: 1px solid rgb(89, 27, 114);
+    border: 1px solid rgb(136, 68, 163);
     padding: 5px 15px;
     font-size: 14px;
 }
 
 button:hover {
-    background-color: rgb(136, 103, 150);
-    border: 1px solid rgb(136, 103, 150);
+    background-color: rgb(85, 26, 110);
+    border: 1px solid rgb(85, 26, 110);
 }
 
 /* HEADER STYLES START */
@@ -57,23 +61,68 @@ header p {
 
 /* QUESTIONS STYLES START */
 #questions {
-    margin: 0 auto;
-    width: 100%;
+    text-align: center;
 }
 
 .question-text {
-    margin-bottom: 30px;
+    margin: 50px 0 20px 0;
 }
 
 .answer-option {
-    display: block;
+    width: 200px;
     margin: 5px 0;
-    width: 15%;
 }
 
-.answer-option:focus {
-    border: 1px solid rgb(136, 103, 150);
+hr {
+    width: 50%;
+    margin: 5px auto;
 }
 
+.answer-container p {
+    font-size: 20px;
+    color: gray;
+    font-style: italic;
+}
 /* QUESTION STYLES END */
+
+/* ENTER SCORE START */
+
+#enter-score {
+    text-align: center;
+    margin: 50px 0;
+}
+
+#enter-score h1 {
+    font-size: 30px;
+}
+
+#enter-score p {
+    margin-top: 20px;
+}
+
+#enter-score button {
+    margin-left: 10px
+}
+
+/* ENTER SCORE END */
+
+/* HIGH SCORE PAGE START */
+#high-scores-container {
+    text-align: center;
+    margin: 80px 0 0 0;
+}
+
+#high-scores-container li:nth-child(odd) {
+    background-color: #b818d894;
+}
+
+#high-scores-container li:nth-child(even) {
+    background-color: #756f72a4;
+}
+
+#high-scores-container button {
+    margin: 10px 5px;
+}
+
+/* HIGH SCORE PAGE END */
 

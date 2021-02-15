@@ -5,26 +5,36 @@ var introEl = document.getElementById('intro');
 
 //Questions Section
 var questionsEl = document.getElementById('questions');
-var questionContainer = document.createElement("div");
-var timeLeft = 75;
+var timeLeft = 30;
+var timeStopped = 0;
 var questionCounter = 0;
-questionContainer.className = "question-container";
+answerContainer = document.createElement("div");
+answerContainer.className = "answer-container";
 var questionText = document.createElement("h2");
 questionText.className = "question-text";
+var option1Container = document.createElement("div");
+option1Container.className = "option-container"
 var option1 = document.createElement("button");
 option1.className = "answer-option";
+var option2Container = document.createElement("div");
+option2Container.className = "option-container"
 var option2 = document.createElement("button");
 option2.className = "answer-option";
+var option3Container = document.createElement("div");
 var option3 = document.createElement("button");
 option3.className = "answer-option";
+option3Container.className = "option-container"
+var option4Container = document.createElement("div");
+option4Container.className = "option-container"
 var option4 = document.createElement("button");
 option4.className = "answer-option correct-answer";
 
-//Enter Score Page
+//Enter Score Section
 var enterScoreEl = document.getElementById('enter-score');
 var initialsInput = document.createElement("input");
 initialsInput.className = "input-box";
 initialsInput.setAttribute("id", "initials-input");
+initialsInput.setAttribute("name", "initials-input");
 var scoreContainer = document.createElement("div");
 var scoreHeader = document.createElement("h1");
 var totalScore = document.createElement("h2");
@@ -32,9 +42,11 @@ var initialsContainer = document.createElement("p");
 var submitButton = document.createElement("button");
 submitButton.className = "submit-button";
 
-//Highscores Page
-var highscoresList = document.getElementById('high-scores-list');
-
+//High Score Page
+var highScoresContainer = document.getElementById('high-scores-container');
+var restartBtn = document.getElementById('restart-btn');
+var clearBtn = document.getElementById('clear-btn');
+var scores = [];
 
 var questions = [
     {q: "Commonly used data types do not include:", choices: ["booleans", "strings", "numbers", "alerts"], answer: "alerts"},
@@ -42,32 +54,57 @@ var questions = [
     {q: "Arrays in JavaScript can be used to store _____", choices: ["other arrays", "numbers and strings", "booleans", "all of the above"], answer: "all of the above"}
 ];
 
-var player = {
-    name: "",
-    score: 0,
-    reset: function () {
-        this.name = "";
-        this.score = 0;
+var saveScore = function() {
+    localStorage.setItem("scores", JSON.stringify(scores));
+};
+
+function loadScores() {
+    var savedScores = localStorage.getItem("scores");
+
+    if (!savedScores) {
+        return false;
+    }
+
+    savedScores = JSON.parse(savedScores);
+    for (var i = 0; i < savedScores.length; i++) {
+        loadPlayer(savedScores[i]);
     }
 }
 
-function showHighScores() {
-    var highScores = localStorage.setItem("player", JSON.stringify(player));
-};
+function createPlayer() {
+    var playerName = document.querySelector("input[name='initials-input']").value;
+    var player = {
+        name: playerName,
+        score: timeLeft,
+    };
 
-function redirectToHighscores() {
-    player.name = document.getElementById('initials-input').value;
-    showHighScores();
     setTimeout(function() {
         window.location = "./highscores.html";
     }, 100);
-    showHighScores();
+
+    debugger
+    loadScores();
+
+    loadPlayer(player);
+    
 };
 
+var loadPlayer = function(player) {
+    var playerItem = document.createElement("li");
+    playerItem.className = "player-item";
+    var playerDetails = document.createElement("div");
+    playerDetails.className = "player-details";
+    playerDetails.innerHTML = player.name + " - " + player.score;
+    scores.push(player);
+    saveScore();
+}
+
 function setScore() {
-    player.score = timeLeft;
+    timeStopped = 1;
+    var playerScore = timeLeft;
+    timerEl.style.display = 'none';
     scoreHeader.textContent = "All done!";
-    totalScore.textContent = "Your final score is " + player.score + ".";
+    totalScore.textContent = "Your final score is " + playerScore + ".";
     initialsContainer.textContent = "Enter initials: ";
     submitButton.textContent = "Submit";
     questionsEl.remove();
@@ -80,31 +117,31 @@ function setScore() {
 };
 
 function countdown() {
-    setInterval(function() {
+    var timer = setInterval(function() {
         //start timer
-        if (timeLeft > 0 && player.score == 0) {
+        if (timeLeft > 0 && timeStopped === 0) {
             timerEl.textContent = timeLeft;
             timeLeft--;
-        } else if (timeLeft < 1 && player.score == 0) {
+        } else if (timeLeft == 0) {
             timeLeft = 0;
             setScore();
         }
     }, 1000);
     introEl.style.display = 'none';
-    createQuestion();
-};
-
-function createQuestion() {
-    questionsEl.appendChild(questionContainer);
-    questionContainer.appendChild(questionText);
-    questionContainer.appendChild(option1);
-    questionContainer.appendChild(option2);
-    questionContainer.appendChild(option3);
-    questionContainer.appendChild(option4);
     showQuestion();
 };
 
 function showQuestion() {
+    questionsEl.appendChild(questionText);
+    questionsEl.appendChild(answerContainer);
+    answerContainer.appendChild(option1Container);
+    answerContainer.appendChild(option2Container);
+    answerContainer.appendChild(option3Container);
+    answerContainer.appendChild(option4Container);
+    option1Container.appendChild(option1);
+    option2Container.appendChild(option2);
+    option3Container.appendChild(option3);
+    option4Container.appendChild(option4);
     if (questionCounter < questions.length) {
         questionText.textContent = questions[questionCounter].q;
         /* var randomArray = [];
@@ -134,13 +171,13 @@ var clickAnswerHandler = function(event) {
 
     if(targetEl.matches(".correct-answer")) {
         answerValid.textContent = "Correct";
-        questionContainer.appendChild(horizontalLine);
-        questionContainer.appendChild(answerValid);
+        answerContainer.appendChild(horizontalLine);
+        answerContainer.appendChild(answerValid);
     } else if(targetEl.matches(".answer-option")) {
         answerValid.textContent = "Incorrect";
-        questionContainer.appendChild(horizontalLine);
-        questionContainer.appendChild(answerValid);
-        timeLeft = timeLeft - 10;
+        answerContainer.appendChild(horizontalLine);
+        answerContainer.appendChild(answerValid);
+        timeLeft = timeLeft - 5;
     }
 
     setTimeout(function() {
@@ -151,7 +188,7 @@ var clickAnswerHandler = function(event) {
 };
 
 startBtn.onclick = countdown;
-submitButton.onclick = redirectToHighscores;
+submitButton.onclick = createPlayer;
 questionsEl.addEventListener("click", clickAnswerHandler);
 
 
