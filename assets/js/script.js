@@ -1,3 +1,9 @@
+//STILL MISSING
+// 1. randomize answer options
+// 2. newly created score not sorting into array before appending to page (could potentially be the order of operations)
+// 3. when timer runs out, the score page does not work. it runs setscore() over and over again even if i set a return false;
+
+
 //Intro Section
 var startBtn = document.getElementById('start-btn');
 var timerEl = document.getElementById('countdown-timer');
@@ -64,9 +70,15 @@ var questions = [
     {q: "A very useful tool used during development and debugging for printing content to the debugger is:", choices: ["JavaScript", "terminal/bash", "for loops", "console log"], answer: "console log"}
 ];
 
+function resetHighScores() {
+    localStorage.clear();
+    highScoresOl.innerHTML = "";
+    highScoresOl.innerHTML = "<p>No high scores. Click 'Go back' to take the quiz again!</p>";
+}
+
 function restart() {
     setTimeout(function() {
-        
+        location.reload();
     }, 100);
 }
 
@@ -80,10 +92,9 @@ function loadScores() {
         for (var i = 0; i < savedScores.length; i++) {
             loadPlayer(savedScores[i]);
         }
-    
+        //debugger
         createPlayer();
-        scores = scores.slice(1, 10);
-        //not sorting new value because the li was appended before the sort
+        scores = scores.slice(0, 9);
         scores.sort((a, b) => (a.score < b.score) ? 1: (a.score === b.score) ? ((a.name > b.name) ? 1 : -1) : -1 );
     }
     
@@ -95,7 +106,6 @@ function loadScores() {
     highScoresContainer.appendChild(highScoresOl);
     highScoresContainer.appendChild(highScoresRestart);
     highScoresContainer.appendChild(highScoresClear);
-
     localStorage.setItem("scores", JSON.stringify(scores));
     
 }
@@ -137,6 +147,10 @@ function setScore() {
     scoreContainer.appendChild(initialsContainer);
     initialsContainer.appendChild(initialsInput);
     initialsContainer.appendChild(submitButton);
+
+    if (playerScore = 0) {
+        return false;
+    }
 };
 
 function countdown() {
@@ -146,6 +160,7 @@ function countdown() {
             timerEl.textContent = timeLeft;
             timeLeft--;
         } else if (timeLeft == 0) {
+            //debugger
             timeLeft = 0;
             setScore();
         }
@@ -213,7 +228,7 @@ var clickAnswerHandler = function(event) {
 startBtn.onclick = countdown;
 submitButton.onclick = loadScores;
 highScoresRestart.onclick = restart;
-highScoresClear.onclick = localStorage.clear();
+highScoresClear.onclick = resetHighScores;
 questionsEl.addEventListener("click", clickAnswerHandler);
 
 
