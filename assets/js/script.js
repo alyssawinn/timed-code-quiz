@@ -1,8 +1,5 @@
 //STILL MISSING
 // 1. randomize answer options
-// 2. newly created score not sorting into array before appending to page (could potentially be the order of operations)
-// 3. when timer runs out, the score page does not work. it runs setscore() over and over again even if i set a return false;
-
 
 //Intro Section
 var startBtn = document.getElementById('start-btn');
@@ -82,54 +79,58 @@ function restart() {
     }, 100);
 }
 
+function savePlayer() {
+    localStorage.setItem("scores", JSON.stringify(scores));
+}
+
 function loadScores() {
-    var savedScores = localStorage.getItem("scores");
-    if (!savedScores) {
-        createPlayer();
-        localStorage.setItem("scores", JSON.stringify(scores));
-    } else {
-        savedScores = JSON.parse(savedScores);
-        for (var i = 0; i < savedScores.length; i++) {
-            loadPlayer(savedScores[i]);
-        }
-        //debugger
-        createPlayer();
-        scores = scores.slice(0, 9);
-        scores.sort((a, b) => (a.score < b.score) ? 1: (a.score === b.score) ? ((a.name > b.name) ? 1 : -1) : -1 );
+    for (var i = 0; i < scores.length; i++) {
+        var playerItem = document.createElement("li");
+        playerItem.className = "player-item";
+        var playerDetails = document.createElement("div");
+        playerDetails.className = "player-details";
+        playerDetails.innerHTML = scores[i].name + " - " + scores[i].score;
+        playerItem.appendChild(playerDetails);
+        highScoresOl.appendChild(playerItem);
     }
-    
     enterScoreEl.style.display = "none";
     headerEl.style.display = "none";
-
     highScoresEl.appendChild(highScoresContainer);
     highScoresContainer.appendChild(highScoresHeader);
     highScoresContainer.appendChild(highScoresOl);
     highScoresContainer.appendChild(highScoresRestart);
     highScoresContainer.appendChild(highScoresClear);
-    localStorage.setItem("scores", JSON.stringify(scores));
-    
-}
+};
 
-var loadPlayer = function(player) {
-    var playerItem = document.createElement("li");
-    playerItem.className = "player-item";
-    var playerDetails = document.createElement("div");
-    playerDetails.className = "player-details";
-    playerDetails.innerHTML = player.name + " - " + player.score;
-    playerItem.appendChild(playerDetails);
-    highScoresOl.appendChild(playerItem); 
-    scores.push(player);
+var loadPlayers = function() {
+    var savedScores = localStorage.getItem("scores");
+    if(!savedScores) {
+        return false;
+    }
+    savedScores = JSON.parse(savedScores);
+    for (var i = 0; i < savedScores.length; i++) {
+        loadEachPlayer(savedScores[i]);
+    }
+    savePlayer();
+};
+
+var loadEachPlayer = function(player) {
+    scores.push(player);    
 }
 
 function createPlayer() {
+    //debugger
     var playerName = document.querySelector("input[name='initials-input']").value;
     var player = {
         name: playerName,
         score: timeLeft,
     };
-
-    loadPlayer(player);
-    
+    scores.push(player);
+    scores.sort((a,b) => b.score - a.score);
+    debugger
+    scores = scores.slice(0,10);
+    savePlayer();
+    loadScores();    
 };
 
 function setScore() {
@@ -147,20 +148,18 @@ function setScore() {
     scoreContainer.appendChild(initialsContainer);
     initialsContainer.appendChild(initialsInput);
     initialsContainer.appendChild(submitButton);
-
-    if (playerScore = 0) {
-        return false;
-    }
 };
 
 function countdown() {
     var timer = setInterval(function() {
         //start timer
-        if (timeLeft > 0 && timeStopped === 0) {
+        if (timeStopped == 0) {
             timerEl.textContent = timeLeft;
             timeLeft--;
-        } else if (timeLeft == 0) {
-            //debugger
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
             timeLeft = 0;
             setScore();
         }
@@ -182,15 +181,6 @@ function showQuestion() {
     option4Container.appendChild(option4);
     if (questionCounter < questions.length) {
         questionText.textContent = questions[questionCounter].q;
-        /* var randomArray = [];
-        for (var i=0; i < questions.choices.length; i++) {
-            var randomIndex = [Math.floor(Math.random() * questions.choices.length)];
-            console.log(randomIndex);
-            randomArray.push(questions.choices[randomIndex]);
-          }
-          
-        randomArray.join(",");
-        console.log(randomArray); */
         option1.textContent = questions[questionCounter].choices[0];
         option2.textContent = questions[questionCounter].choices[1];
         option3.textContent = questions[questionCounter].choices[2];
@@ -207,11 +197,11 @@ var clickAnswerHandler = function(event) {
     var horizontalLine = document.createElement("hr");
     var answerValid = document.createElement("p");
 
-    if(targetEl.matches(".correct-answer")) {
+    if (targetEl.matches(".correct-answer")) {
         answerValid.textContent = "Correct";
         answerContainer.appendChild(horizontalLine);
         answerContainer.appendChild(answerValid);
-    } else if(targetEl.matches(".answer-option")) {
+    } else if (targetEl.matches(".answer-option")) {
         answerValid.textContent = "Incorrect";
         answerContainer.appendChild(horizontalLine);
         answerContainer.appendChild(answerValid);
@@ -225,8 +215,9 @@ var clickAnswerHandler = function(event) {
     }, 1000);
 };
 
+loadPlayers();
 startBtn.onclick = countdown;
-submitButton.onclick = loadScores;
+submitButton.onclick = createPlayer;
 highScoresRestart.onclick = restart;
 highScoresClear.onclick = resetHighScores;
 questionsEl.addEventListener("click", clickAnswerHandler);
