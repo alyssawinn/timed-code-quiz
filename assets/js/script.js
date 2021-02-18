@@ -1,6 +1,3 @@
-//STILL MISSING
-// 1. randomize answer options
-
 //Intro Section
 var startBtn = document.getElementById('start-btn');
 var timerEl = document.getElementById('countdown-timer');
@@ -119,7 +116,6 @@ var loadEachPlayer = function(player) {
 }
 
 function createPlayer() {
-    //debugger
     var playerName = document.querySelector("input[name='initials-input']").value;
     var player = {
         name: playerName,
@@ -127,7 +123,6 @@ function createPlayer() {
     };
     scores.push(player);
     scores.sort((a,b) => b.score - a.score);
-    debugger
     scores = scores.slice(0,10);
     savePlayer();
     loadScores();    
@@ -186,6 +181,10 @@ function showQuestion() {
         option3.textContent = questions[questionCounter].choices[2];
         option4.textContent = questions[questionCounter].choices[3];
         questionCounter++;
+        for (var i = answerContainer.children.length; i >= 0; i--) {
+            answerContainer.appendChild(answerContainer.children[Math.random() * i | 0]);
+        }
+
     } else {
         setScore();
     }
